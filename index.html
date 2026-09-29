@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A private, browser-based invoice maker for small businesses.">
+  <title>Invoice Maker for Small Business</title>
+  <script>
+    try {
+      const theme = localStorage.getItem('invoice-maker-theme-v1');
+      if (theme === 'dark' || theme === 'light') document.documentElement.dataset.theme = theme;
+    } catch (error) { /* Browser storage may be unavailable. */ }
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#invoice-preview" data-i18n="skipToPreview">Skip to invoice preview</a>
+
+  <main class="app-shell">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow" data-i18n="headerEyebrow">Small business toolkit</p>
+        <h1 data-i18n="pageTitle">Invoice Maker</h1>
+        <p class="page-intro" data-i18n="pageIntro">Create a clear invoice, check the totals, and print a professional copy.</p>
+      </div>
+      <div class="header-tools">
+        <p class="privacy-note" data-i18n="privacyNote">Your draft stays in this browser.</p>
+        <div class="preference-controls">
+          <div class="language-switch" role="group" aria-label="Language" data-i18n-aria-label="languageControl">
+            <button class="preference-button" type="button" data-locale="en" aria-pressed="true" data-i18n="languageEnglish">English</button>
+            <button class="preference-button" type="button" data-locale="ar" aria-pressed="false" data-i18n="languageArabic">&#x627;&#x644;&#x639;&#x631;&#x628;&#x64A;&#x629;</button>
+          </div>
+          <button id="theme-toggle" class="preference-button theme-toggle" type="button" aria-pressed="false">Dark theme</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <section class="form-card" aria-labelledby="form-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" data-i18n="formEyebrow">Invoice details</p>
+            <h2 id="form-heading" data-i18n="formTitle">Build your invoice</h2>
+          </div>
+          <span class="autosave-label" data-i18n="autosaveLabel">Auto-saves locally</span>
+        </div>
+
+        <form id="invoice-form" novalidate>
+          <fieldset>
+            <legend data-i18n="businessDetails">Business details</legend>
+            <div class="form-grid">
+              <div class="field field-full">
+                <label for="business-name" data-i18n="businessName">Business name</label>
+                <input id="business-name" name="business-name" data-section="business" data-key="name" type="text" autocomplete="organization" placeholder="Your business name">
+              </div>
+              <div class="field field-full">
+                <label for="business-address" data-i18n="businessAddress">Business address</label>
+                <textarea id="business-address" name="business-address" data-section="business" data-key="address" autocomplete="street-address" rows="2" placeholder="Area, city, country"></textarea>
+              </div>
+              <div class="field">
+                <label for="business-phone" data-i18n="businessPhone">Business phone</label>
+                <input id="business-phone" name="business-phone" data-section="business" data-key="phone" type="tel" autocomplete="tel" placeholder="Add a contact number">
+              </div>
+              <div class="field">
+                <label for="business-email" data-i18n="businessEmail">Business email</label>
+                <input id="business-email" name="business-email" data-section="business" data-key="email" type="email" autocomplete="email" placeholder="hello@yourbusiness.example">
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend data-i18n="invoiceDetails">Invoice details</legend>
+            <div class="form-grid">
+              <div class="field">
+                <label for="invoice-number" data-i18n="invoiceNumber">Invoice number</label>
+                <input id="invoice-number" name="invoice-number" data-section="invoice" data-key="number" type="text" placeholder="INV-0001">
+              </div>
+              <div class="field">
+                <label for="invoice-date" data-i18n="invoiceDate">Invoice date</label>
+                <input id="invoice-date" name="invoice-date" data-section="invoice" data-key="date" type="date">
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="saved-clients-fieldset">
+            <legend data-i18n="savedClients">Saved Clients</legend>
+            <div class="field saved-client-field">
+              <label for="saved-client-selector" data-i18n="chooseSavedClient">Choose a saved client</label>
+              <select id="saved-client-selector" name="saved-client-selector" aria-describedby="saved-clients-help">
+                <option value="">Select client</option>
+              </select>
+              <div class="client-action-row">
+                <button id="save-current-client-button" class="button button-secondary" type="button" data-i18n="saveCurrentClient">Save Current Client</button>
+                <button id="delete-saved-client-button" class="button button-danger" type="button" disabled data-i18n="deleteSavedClient">Delete Saved Client</button>
+              </div>
+              <p id="saved-clients-help" class="field-help" data-i18n="savedClientsHelp">Your saved clients stay only in this browser. Fictional examples cannot be changed or deleted.</p>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend data-i18n="customerDetails">Customer details</legend>
+            <div class="form-grid">
+              <div class="field field-full">
+                <label for="customer-name" data-i18n="customerName">Customer name</label>
+                <input id="customer-name" name="customer-name" data-section="customer" data-key="name" type="text" autocomplete="name" placeholder="Customer or company name">
+              </div>
+              <div class="field field-full">
+                <label for="customer-address" data-i18n="customerAddress">Customer address</label>
+                <textarea id="customer-address" name="customer-address" data-section="customer" data-key="address" autocomplete="street-address" rows="2" placeholder="Area, city, country"></textarea>
+              </div>
+              <div class="field field-full">
+                <label for="customer-contact" data-i18n="customerContact">Customer phone or email</label>
+                <input id="customer-contact" name="customer-contact" data-section="customer" data-key="contact" type="text" autocomplete="email" placeholder="Preferred contact detail">
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset id="saved-products-panel" class="saved-products-panel" hidden>
+            <legend id="saved-products-heading">Saved Products</legend>
+            <p class="eyebrow product-eyebrow" data-i18n="customerCatalog">Customer catalog</p>
+            <p id="saved-products-empty" class="field-help" data-i18n="savedProductsEmpty">This customer has no saved products yet. Add one below to reuse it on future invoices.</p>
+            <div id="saved-product-rows" class="saved-product-rows"></div>
+            <div class="product-create-grid">
+              <div class="field">
+                <label for="new-product-name" data-i18n="productName">Product or service name</label>
+                <input id="new-product-name" type="text" placeholder="e.g. Monthly design support">
+              </div>
+              <div class="field">
+                <label for="new-product-price" data-i18n="defaultUnitPrice">Default unit price (SAR)</label>
+                <input id="new-product-price" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+              </div>
+              <button id="save-product-button" class="button button-secondary" type="button" data-i18n="saveProduct">Save Product</button>
+            </div>
+          </fieldset>
+
+          <fieldset class="items-fieldset">
+            <div class="items-heading">
+              <legend data-i18n="itemsServices">Items / services</legend>
+              <span id="item-count" class="item-count">0 invoice items</span>
+            </div>
+            <p id="items-help" class="field-help">Add as many invoice items as you need. Quantity and price cannot be negative.</p>
+            <div class="items-form-header" aria-hidden="true">
+              <span>Description</span>
+              <span>Qty</span>
+              <span>Unit price (SAR)</span>
+              <span>Total</span>
+              <span>Action</span>
+            </div>
+            <div id="item-rows" class="item-rows"></div>
+            <button id="add-item-button" class="button button-secondary add-item-button" type="button" data-i18n="addItem">Add item</button>
+          </fieldset>
+
+          <div class="action-row">
+            <button id="load-example-button" class="button button-secondary" type="button" data-i18n="loadExample">Load Example</button>
+            <button id="clear-form-button" class="button button-danger" type="button" data-i18n="clearForm">Clear Form</button>
+            <button id="print-invoice-button" class="button button-primary" type="button" data-i18n="printInvoice">Print Invoice</button>
+          </div>
+          <p id="app-status" class="app-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section id="invoice-preview" class="preview-area" aria-labelledby="preview-heading" tabindex="-1">
+        <div class="preview-label-row">
+          <p class="eyebrow" data-i18n="livePreview">Live preview</p>
+          <p class="preview-hint" data-i18n="updatesAsType">Updates as you type</p>
+        </div>
+
+        <article class="invoice-paper" aria-describedby="invoice-practice-note">
+          <header class="invoice-header">
+            <div class="invoice-brand">
+              <div class="brand-mark" aria-hidden="true">IM</div>
+              <div>
+                <p id="preview-business-name" class="invoice-business-name placeholder-text">Your business name</p>
+                <p id="preview-business-address" class="invoice-address placeholder-text">Business address</p>
+              </div>
+            </div>
+            <div class="invoice-title-block">
+              <h2 id="preview-heading" data-i18n="invoiceTitle">Invoice</h2>
+              <dl class="invoice-meta">
+                <div>
+                  <dt data-i18n="invoiceNo">Invoice no.</dt>
+                  <dd id="preview-invoice-number" class="placeholder-text">INV-0001</dd>
+                </div>
+                <div>
+                  <dt data-i18n="dateLabel">Date</dt>
+                  <dd id="preview-invoice-date" class="placeholder-text">Add invoice date</dd>
+                </div>
+              </dl>
+            </div>
+          </header>
+
+          <div class="invoice-details-grid">
+            <section class="invoice-contact-block" aria-labelledby="from-heading">
+              <p id="from-heading" class="invoice-section-label" data-i18n="fromLabel">From</p>
+              <p id="preview-business-phone" class="placeholder-text">Business phone</p>
+              <p id="preview-business-email" class="placeholder-text">Business email</p>
+            </section>
+            <section class="invoice-contact-block" aria-labelledby="bill-to-heading">
+              <p id="bill-to-heading" class="invoice-section-label" data-i18n="billTo">Bill To</p>
+              <p id="preview-customer-name" class="contact-name placeholder-text">Customer name</p>
+              <p id="preview-customer-address" class="placeholder-text">Customer address</p>
+              <p id="preview-customer-contact" class="placeholder-text">Customer phone or email</p>
+            </section>
+          </div>
+
+          <div class="invoice-table-wrap">
+            <table class="invoice-table">
+              <caption class="sr-only">Invoice items and totals</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Description</th>
+                  <th scope="col" class="numeric-cell">Quantity</th>
+                  <th scope="col" class="numeric-cell">Unit Price</th>
+                  <th scope="col" class="numeric-cell">Total</th>
+                </tr>
+              </thead>
+              <tbody id="preview-items"></tbody>
+            </table>
+          </div>
+
+          <div class="invoice-footer-grid">
+            <p class="invoice-thanks" data-i18n="thankYou">Thank you for your business.</p>
+            <dl class="totals-list">
+              <div>
+                <dt data-i18n="subtotal">Subtotal</dt>
+                <dd id="preview-subtotal">SAR 0.00</dd>
+              </div>
+              <div>
+                <dt><span data-i18n="vat">VAT</span> <span>(15%)</span></dt>
+                <dd id="preview-vat">SAR 0.00</dd>
+              </div>
+              <div class="grand-total">
+                <dt data-i18n="totalIncludingVat">Total including VAT</dt>
+                <dd id="preview-total">SAR 0.00</dd>
+              </div>
+            </dl>
+          </div>
+
+          <footer id="invoice-practice-note" class="invoice-practice-note" data-i18n="practiceNote">Practice invoice template — verify local tax requirements before business use.</footer>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <script src="sample-data/data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
